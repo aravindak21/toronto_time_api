@@ -1,0 +1,41 @@
+
+
+services:
+  # Go application service
+  app:
+    build: .
+    container_name: toronto_time_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=Aravind@sv123
+      - MYSQL_DB=toronto_time
+    networks:
+      - toronto_network
+
+  # MySQL service
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: Aravind@sv123
+      MYSQL_DATABASE: toronto_time
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - toronto_network
+
+# Volumes to persist data
+volumes:
+  mysql-data:
+
+# Networks to allow communication between containers
+networks:
+  toronto_network:
+    driver: bridge
