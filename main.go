@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -19,8 +20,17 @@ func main() {
 	// Set log output to the log file
 	log.SetOutput(logFile)
 
+	// Read MySQL connection details from environment variables
+	user := os.Getenv("MYSQL_USER")
+	password := os.Getenv("MYSQL_PASSWORD")
+	host := os.Getenv("MYSQL_HOST")
+	dbname := os.Getenv("MYSQL_DB")
+
+	// Create connection string (DSN)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", user, password, host, dbname)
+
 	// Initialize the database connection
-	err = db.InitDB()
+	err = db.InitDB(dsn) // Pass dsn as an argument
 	if err != nil {
 		log.Fatalf("Error initializing the database: %v", err)
 	}
