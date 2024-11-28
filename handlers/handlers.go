@@ -39,37 +39,37 @@ func CurrentTimeHandler(w http.ResponseWriter, r *http.Request) {
 
 // GetLoggedTimesHandler handles the /logged-times endpoint
 func GetLoggedTimesHandler(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.DB.Query("SELECT id, timestamp FROM time_log")
-	if err != nil {
-		http.Error(w, "Failed to retrieve logged times", http.StatusInternalServerError)
-		log.Printf("Error retrieving logged times: %v", err)
-		return
-	}
-	defer rows.Close()
+    rows, err := db.DB.Query("SELECT id, timestamp FROM time_log")
+    if err != nil {
+        http.Error(w, "Failed to retrieve logged times", http.StatusInternalServerError)
+        log.Printf("Error retrieving logged times: %v", err)
+        return
+    }
+    defer rows.Close()
 
-	var times []map[string]interface{}
-	for rows.Next() {
-		var id int
-		var timestamp time.Time
-		err = rows.Scan(&id, &timestamp)
-		if err != nil {
-			log.Printf("Error scanning row: %v", err)
-			continue
-		}
-		times = append(times, map[string]interface{}{
-			"id":        id,
-			"timestamp": timestamp,
-		})
-	}
+    var times []map[string]interface{}
+    for rows.Next() {
+        var id int
+        var timestamp time.Time
+        err = rows.Scan(&id, &timestamp)
+        if err != nil {
+            log.Printf("Error scanning row: %v", err)
+            continue
+        }
+        times = append(times, map[string]interface{}{
+            "id":        id,
+            "timestamp": timestamp,
+        })
+    }
 
-	if len(times) == 0 {
-		log.Println("No logged times found.")
-	}
+    if len(times) == 0 {
+        log.Println("No logged times found.")
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(times); err != nil {
-		log.Printf("Error encoding response: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
+    w.Header().Set("Content-Type", "application/json")
+    if err := json.NewEncoder(w).Encode(times); err != nil {
+        log.Printf("Error encoding response: %v", err)
+        http.Error(w, "Internal server error", http.StatusInternalServerError)
+        return
+    }
 }
